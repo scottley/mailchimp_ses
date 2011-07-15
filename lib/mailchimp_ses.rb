@@ -25,9 +25,16 @@ class MailchimpSes < MonsterMash::Base
     check_api_key!
 
     uri "http://#{datacenter}.sts.mailchimp.com/1.0/SendEmail"
+    params(parse_options(options))
 
-    # Message params.
-    message = parse_message_options(options[:message])
+    handler do |response|
+      json = JSON.parse(response.body)
+    end
+  end
+
+  DEFAULT_OPTIONS = { :autogen_html => true }
+  def self.parse_options(options)
+    options = DEFAULT_OPTIONS.merge(options)
 
     # Handle tags.
     tags = nil
@@ -35,17 +42,16 @@ class MailchimpSes < MonsterMash::Base
       tags = convert_to_hash_array(options[:tags])
     end
 
-    params :message => message,
-           :track_opens => extract_param(options, :track_opens).to_s,
-           :track_clicks => extract_param(options, :track_clicks).to_s,
-           :tags => tags
-
-    handler do |response|
-      json = JSON.parse(response.body)
-    end
+    {
+      :message => parse_message_options(options[:message]),
+      :track_opens => extract_param(options, :track_opens).to_s,
+      :track_clicks => extract_param(options, :track_clicks).to_s,
+      :autogen_html => extract_param(options, :autogen_html).to_s,
+      :tags => tags
+    }
   end
 
-  OPTIONAL_FIELDS = [:to_name, :reply_to, :cc_email, :cc_name, :bcc_email, :bcc_name]
+  OPTIONAL_MESSAGE_FIELDS = [:to_name, :reply_to, :cc_email, :cc_name, :bcc_email, :bcc_name]
   def self.parse_message_options(message_options)
     message = {
       :html => extract_param(message_options, :html),
@@ -56,7 +62,7 @@ class MailchimpSes < MonsterMash::Base
       :to_email => convert_to_hash_array(extract_param(message_options, :to_email))
     }
 
-    OPTIONAL_FIELDS.each do |field|
+    OPTIONAL_MESSAGE_FIELDS.each do |field|
       set_optional_field!(message, message_options, field)
     end
 

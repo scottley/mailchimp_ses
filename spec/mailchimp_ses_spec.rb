@@ -13,16 +13,31 @@ describe "MailchimpSes" do
     }
   end
 
-  before(:each) do
-    # disabled in production.
-    MailchimpSes.api_key = "test-us1"
-
-    @valid_params = {
+  let(:options) do
+    {
       :message => message,
       :tags => ['fun', 'message', 'unique'],
       :track_opens => true,
       :track_clicks => true
     }
+  end
+
+  before(:each) do
+    # disabled in production.
+    MailchimpSes.api_key = "test-us1"
+  end
+
+  describe "#parse_options" do
+    subject { MailchimpSes.parse_options(options) }
+
+    it "should set autogen_html to true by default" do
+      subject[:autogen_html].should == 'true'
+    end
+
+    it "should allow overriding autogen_html to false" do
+      options[:autogen_html] = false
+      subject[:autogen_html].should == 'false'
+    end
   end
 
   describe "#parse_message_options" do
@@ -113,24 +128,24 @@ describe "MailchimpSes" do
       it "should raise error w/ no api key" do
         MailchimpSes.api_key = nil
         lambda {
-          MailchimpSes.send_email(@valid_params)
+          MailchimpSes.send_email(options)
         }.should raise_error(ArgumentError)
       end
 
       [:track_opens, :track_clicks].each do |field|
         it "should require #{field}" do
-          @valid_params.delete(field)
+          options.delete(field)
           lambda {
-            MailchimpSes.send_email(@valid_params)
+            MailchimpSes.send_email(options)
           }.should raise_error(ArgumentError)
         end
       end
 
       [:html, :subject, :from_name, :from_email, :to_email].each do |field|
         it "should require message #{field}" do
-          @valid_params[:message].delete(field)
+          options[:message].delete(field)
           lambda {
-            MailchimpSes.send_email(@valid_params)
+            MailchimpSes.send_email(options)
           }.should raise_error(ArgumentError)
         end
       end
@@ -139,20 +154,20 @@ describe "MailchimpSes" do
         email_key = pair[0]
         name_key = pair[1]
         it "should not allow #{email_key} and #{name_key} to be different lengths" do
-          @valid_params[:message][email_key] = ['fds@fds.com', 'a@b.com']
-          @valid_params[:message][name_key] = ['My Friend Fds']
+          options[:message][email_key] = ['fds@fds.com', 'a@b.com']
+          options[:message][name_key] = ['My Friend Fds']
 
           lambda {
-            MailchimpSes.send_email(@valid_params)
+            MailchimpSes.send_email(options)
           }.should raise_error(ArgumentError)
         end
 
         it "should not allow #{email_key} with an empty #{name_key}" do
-          @valid_params[:message][email_key] = ['fdsa@fdsa.com']
-          @valid_params[:message][name_key] = []
+          options[:message][email_key] = ['fdsa@fdsa.com']
+          options[:message][name_key] = []
 
           lambda {
-            MailchimpSes.send_email(@valid_params)
+            MailchimpSes.send_email(options)
           }.should raise_error(ArgumentError)
         end
       end
@@ -162,7 +177,7 @@ describe "MailchimpSes" do
       use_vcr_cassette 'send_email', :record => :new_episodes
 
       it "should return a success or failure" do
-        result = MailchimpSes.send_email(@valid_params)
+        result = MailchimpSes.send_email(options)
         result['status'].should == 'sent'
         result['message_id'].should_not be_nil
       end
