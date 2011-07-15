@@ -1,6 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    columnize (0.3.3)
     diff-lcs (1.1.2)
     git (1.2.5)
     jeweler (1.5.2)
@@ -8,20 +9,28 @@ GEM
       git (>= 1.2.5)
       rake
     json (1.5.1)
+    linecache (0.46)
+      rbx-require-relative (> 0.0.4)
     mime-types (1.16)
     monster_mash (0.2.2)
       typhoeus (>= 0.2.3)
       typhoeus (>= 0.2.3)
     rake (0.8.7)
+    rbx-require-relative (0.0.5)
     rcov (0.9.9)
-    rspec (2.3.0)
-      rspec-core (~> 2.3.0)
-      rspec-expectations (~> 2.3.0)
-      rspec-mocks (~> 2.3.0)
-    rspec-core (2.3.1)
-    rspec-expectations (2.3.0)
+    rspec (2.6.0)
+      rspec-core (~> 2.6.0)
+      rspec-expectations (~> 2.6.0)
+      rspec-mocks (~> 2.6.0)
+    rspec-core (2.6.4)
+    rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
-    rspec-mocks (2.3.0)
+    rspec-mocks (2.6.0)
+    ruby-debug (0.10.4)
+      columnize (>= 0.1)
+      ruby-debug-base (~> 0.10.4.0)
+    ruby-debug-base (0.10.4)
+      linecache (>= 0.3)
     typhoeus (0.2.3)
       mime-types
       mime-types
@@ -36,5 +45,6 @@ DEPENDENCIES
   json
   monster_mash (>= 0.2.2)
   rcov
-  rspec (~> 2.3.0)
+  rspec (~> 2.6)
+  ruby-debug
   vcr

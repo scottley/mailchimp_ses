@@ -27,30 +27,7 @@ class MailchimpSes < MonsterMash::Base
     uri "http://#{datacenter}.sts.mailchimp.com/1.0/SendEmail"
 
     # Message params.
-    message = {
-      :html => extract_param(options[:message], :html),
-      :text => options[:message][:text],
-      :subject => extract_param(options[:message], :subject),
-      :from_name => extract_param(options[:message], :from_name),
-      :from_email => extract_param(options[:message], :from_email),
-      :to_email => convert_to_hash_array(extract_param(options[:message], :to_email))
-    }
-
-    # Pull optional to_name.
-    if options[:message].has_key?(:to_name) && !options[:message][:to_name].empty?
-      message[:to_name] = convert_to_hash_array(options[:message][:to_name])
-    end
-    
-    # Pull optional reply_to.
-    if options[:message].has_key?(:reply_to) && !options[:message][:reply_to].blank?
-      message[:reply_to] = convert_to_hash_array(options[:message][:reply_to])
-    end
-
-    # Check on to_email and to_name length.
-    if message.has_key?(:to_email) && message.has_key?(:to_name) &&
-        message[:to_email].size != message[:to_name].size
-      raise ArgumentError, "to_email and to_name need the same number of values"
-    end
+    message = parse_message_options(options[:message])
 
     # Handle tags.
     tags = nil
@@ -62,13 +39,53 @@ class MailchimpSes < MonsterMash::Base
            :track_opens => extract_param(options, :track_opens).to_s,
            :track_clicks => extract_param(options, :track_clicks).to_s,
            :tags => tags
-            
+
     handler do |response|
       json = JSON.parse(response.body)
     end
   end
 
+  OPTIONAL_FIELDS = [:to_name, :reply_to, :cc_email, :cc_name, :bcc_email, :bcc_name]
+  def self.parse_message_options(message_options)
+    message = {
+      :html => extract_param(message_options, :html),
+      :text => message_options[:text],
+      :subject => extract_param(message_options, :subject),
+      :from_name => extract_param(message_options, :from_name),
+      :from_email => extract_param(message_options, :from_email),
+      :to_email => convert_to_hash_array(extract_param(message_options, :to_email))
+    }
+
+    OPTIONAL_FIELDS.each do |field|
+      set_optional_field!(message, message_options, field)
+    end
+
+    # Check lengths of arrays.
+    check_recipients!(message, :to_email, :to_name)
+    check_recipients!(message, :cc_email, :cc_name)
+    check_recipients!(message, :bcc_email, :bcc_name)
+
+    message
+  end
+
 private
+
+  def self.set_optional_field!(message, options, key)
+    if options.has_key?(key) && !options[key].empty?
+      message[key] = convert_to_hash_array(options[key])
+    end
+  end
+
+  def self.check_recipients!(message, email_key, name_key)
+    if message.has_key?(email_key) || message.has_key?(name_key)
+      emails = message[email_key].size rescue 0
+      names = message[name_key].size rescue 0
+
+      if emails != names
+        raise ArgumentError, "#{email_key} and #{name_key} need the same number of values"
+      end
+    end
+  end
 
   def self.check_api_key!
     if self.api_key.nil?
