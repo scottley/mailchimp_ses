@@ -1,3 +1,8 @@
+1.0.4
+-----
+* Added BCC / CC options [dbalatero]
+* Added autogen_html option [dbalatero]
+
 1.0.3
 -----
 * Added reply_to option [jeffmcfadden]
