@@ -13,12 +13,12 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "mailchimp_ses"
-  gem.homepage = "http://github.com/dbalatero/mailchimp_ses"
+  gem.homepage = "http://github.com/scottley/mailchimp_ses"
   gem.license = "MIT"
   gem.summary = %Q{Gives API methods for MailChimp SES.}
   gem.description = %Q{Allows you to call MailChimp <-> Amazon SES integration methods.}
-  gem.email = "dbalatero@gmail.com"
-  gem.authors = ["David Balatero"]
+  gem.email = "scott@simon.org"
+  gem.authors = ["Scott Simon", "Dave Balatero"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
@@ -27,8 +27,8 @@ Jeweler::Tasks.new do |gem|
   gem.add_development_dependency 'rspec', '~> 2.3.0'
   gem.add_development_dependency 'jeweler', '~> 1.5.2'
   gem.add_development_dependency 'vcr'
-  gem.add_runtime_dependency 'monster_mash', '>= 0.2.2'
   gem.add_runtime_dependency 'json'
+  gem.add_runtime_dependency 'rest-client', '~> 1.6.7'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
