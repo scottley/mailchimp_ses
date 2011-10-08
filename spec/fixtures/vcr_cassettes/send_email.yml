@@ -2,44 +2,82 @@
 - !ruby/struct:VCR::HTTPInteraction 
   request: !ruby/struct:VCR::Request 
     method: :post
-    uri: http://us1.sts.mailchimp.com:80/1.0/SendEmail
+    uri: http://us2.sts.mailchimp.com:80/1.0/SendEmail
     body: 
     headers: 
-      user-agent: 
-      - Typhoeus - http://github.com/dbalatero/typhoeus/tree/master
+      accept: 
+      - application/json
+      content-type: 
+      - application/x-www-form-urlencoded
+      accept-encoding: 
+      - gzip, deflate
+      content-length: 
+      - "442"
   response: !ruby/struct:VCR::Response 
     status: !ruby/struct:VCR::ResponseStatus 
       code: 200
-      message: Continue
+      message: OK
     headers: 
       x-powered-by: 
-      - PHP/5.2.16
+      - PHP/5.2.10
       content-type: 
       - application/json; charset=utf-8
       date: 
-      - Sun, 13 Feb 2011 05:07:29 GMT
+      - Sat, 08 Oct 2011 17:36:58 GMT
       server: 
-      - Apache/2.2.3 (Red Hat)
+      - Apache/2.2.3 (CentOS)
       content-length: 
       - "110"
       content-encoding: 
       - gzip
+      set-cookie: 
+      - _AVESTA_ENVIRONMENT=prod; path=/
       vary: 
       - Accept-Encoding
-    body: "{\"message_id\":\"2819e141-372f-11e0-bd4e-4162672e6bcb\",\"aws_code\":null,\"msg\":null,\"status\":\"sent\"}"
+    body: !binary |
+      H4sIAAAAAAAAAzTMMQ6AIBAEwL9cDYlnUJHPGITFmIAWB7Ew/l0bu6nmpgIR
+      v2HZIzniNIY09kEnjkYzo9OznaLGwKudYQAYUuQvWcIZQe5oOSsqsv2U6muT
+      rxIclZ4XAAD//wMAXjUZeGAAAAA=
+
     http_version: "1.1"
 - !ruby/struct:VCR::HTTPInteraction 
   request: !ruby/struct:VCR::Request 
     method: :post
-    uri: http://test.sts.mailchimp.com:80/1.0/SendEmail
+    uri: http://us2.sts.mailchimp.com:80/1.0/SendEmail
     body: 
     headers: 
-      user-agent: 
-      - Typhoeus - http://github.com/dbalatero/typhoeus/tree/master
+      accept: 
+      - application/json
+      content-type: 
+      - application/x-www-form-urlencoded
+      accept-encoding: 
+      - gzip, deflate
+      content-length: 
+      - "442"
   response: !ruby/struct:VCR::Response 
     status: !ruby/struct:VCR::ResponseStatus 
-      code: 0
-      message: 
+      code: 200
+      message: OK
     headers: 
-    body: 
-    http_version: 
+      x-powered-by: 
+      - PHP/5.2.10
+      content-type: 
+      - application/json; charset=utf-8
+      date: 
+      - Sat, 08 Oct 2011 17:37:09 GMT
+      server: 
+      - Apache/2.2.3 (CentOS)
+      content-length: 
+      - "112"
+      content-encoding: 
+      - gzip
+      set-cookie: 
+      - _AVESTA_ENVIRONMENT=prod; path=/
+      vary: 
+      - Accept-Encoding
+    body: !binary |
+      H4sIAAAAAAAAAzTMOwqAMAwA0LtkbqDRWK2XkdRGEfwMqTiId9fF7U3vhk3N
+      ZNZhydBDFTjVyRNOlBmJ1GOMtWATW04pUOu5Awdy2TAeWaHfz3V1sNn804qU
+      077KdC/wvAAAAP//AwBl7cqeYAAAAA==
+
+    http_version: "1.1"

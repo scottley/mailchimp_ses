@@ -10,7 +10,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 VCR.config do |c|
   c.cassette_library_dir = File.dirname(__FILE__) + '/fixtures/vcr_cassettes'
-  c.stub_with :typhoeus # or :fakeweb
+  c.stub_with :fakeweb
 end
 
 RSpec.configure do |config|

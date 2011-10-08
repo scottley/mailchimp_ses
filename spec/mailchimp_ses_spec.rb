@@ -6,10 +6,10 @@ describe "MailchimpSes" do
       :subject => 'Welcome to our website!',
       :html => '<html>Welcome to our site.</html>',
       :text => 'Welcome to our website.',
-      :from_name => 'David Balatero',
-      :from_email => 'david@mediapiston.com',
-      :to_email => ['dbalatero@gmail.com'],
-      :to_name => ['David Balatero']
+      :from_name => 'Mr. Tester',
+      :from_email => 'mrtester@testaland.com',
+      :to_email => ['msreceiver@gmail.com'],
+      :to_name => ['Ms. Receiver']
     }
   end
 
@@ -24,7 +24,7 @@ describe "MailchimpSes" do
 
   before(:each) do
     # disabled in production.
-    MailchimpSes.api_key = "test-us1"
+    MailchimpSes.api_key = "test-us2"
   end
 
   describe "#parse_options" do
@@ -55,23 +55,37 @@ describe "MailchimpSes" do
       end
 
       it 'should set from_name' do
-        subject[:from_name].should == 'David Balatero'
+        subject[:from_name].should == 'Mr. Tester'
       end
 
       it 'should set from_email' do
-        subject[:from_email].should == 'david@mediapiston.com'
+        subject[:from_email].should == 'mrtester@testaland.com'
       end
 
       it 'should set to_email' do
-        subject[:to_email][0].should == 'dbalatero@gmail.com'
+        subject[:to_email][0].should == 'msreceiver@gmail.com'
       end
 
       it 'should set to_name' do
-        subject[:to_name][0].should == 'David Balatero'
+        subject[:to_name][0].should == 'Ms. Receiver'
       end
     end
 
     subject { MailchimpSes.parse_message_options(message) }
+
+    describe "with reply_to option" do
+      it "should set reply_to from an array" do
+        message.merge!(:reply_to => ['dude@dude.com'])
+        subject[:reply_to][0].should == 'dude@dude.com'
+      end
+      
+      it "should ignore reply_to if set to nil" do
+        message.merge!(:reply_to => nil)
+        subject[:reply_to].should == nil
+      end
+      
+      it_should_behave_like 'basic message parser'
+    end
 
     describe "with cc options" do
       before do

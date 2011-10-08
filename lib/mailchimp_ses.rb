@@ -1,35 +1,28 @@
-require 'monster_mash'
 require 'json'
+require 'pry'
+require 'rest-client'
 
-class MailchimpSes < MonsterMash::Base
+class MailchimpSes
   @api_key = nil
-
-  defaults do
-    params :apikey => MailchimpSes.api_key
-  end
 
   class << self
     attr_accessor :api_key
   end
 
-  post(:verify_email_address) do |email|
+  def self.verify_email_address(email)
     check_api_key!
-    uri "http://#{datacenter}.sts.mailchimp.com/1.0/VerifyEmailAddress"
-    params :email => email
-    handler do |response|
-      true
-    end
+    uri = "http://#{datacenter}.sts.mailchimp.com/1.0/VerifyEmailAddress"
+    req_opts = {:email => email, :apikey => MailchimpSes.api_key}
+    response = RestClient.post(uri, req_opts)
+    response.code==200 ? true : false
   end
-
-  post(:send_email) do |options|
+  
+  def self.send_email(options)
     check_api_key!
-
-    uri "http://#{datacenter}.sts.mailchimp.com/1.0/SendEmail"
-    params(parse_options(options))
-
-    handler do |response|
-      json = JSON.parse(response.body)
-    end
+    uri = "http://#{datacenter}.sts.mailchimp.com/1.0/SendEmail"
+    req_opts = parse_options(options).merge({:apikey => MailchimpSes.api_key})
+    response = RestClient.post(uri, req_opts, {:accept => :json})
+    JSON.parse(response.body)
   end
 
   DEFAULT_OPTIONS = { :autogen_html => true }
@@ -77,7 +70,7 @@ class MailchimpSes < MonsterMash::Base
 private
 
   def self.set_optional_field!(message, options, key)
-    if options.has_key?(key) && !options[key].empty?
+    if options.has_key?(key) && !options[key].nil? && !options[key].empty?
       message[key] = convert_to_hash_array(options[key])
     end
   end
@@ -119,3 +112,23 @@ private
     api_key.split(/-/).last
   end
 end
+
+# post(:send_email) do |options|
+#   check_api_key!
+# 
+#   uri "http://#{datacenter}.sts.mailchimp.com/1.0/SendEmail"
+#   params(parse_options(options))
+# 
+#   handler do |response|
+#     json = JSON.parse(response.body)
+#   end
+# end
+
+# post(:verify_email_address) do |email|
+#   check_api_key!
+#   uri "http://#{datacenter}.sts.mailchimp.com/1.0/VerifyEmailAddress"
+#   params :email => email
+#   handler do |response|
+#     true
+#   end
+# end
